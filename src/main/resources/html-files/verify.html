@@ -1,0 +1,210 @@
+<html>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
+  }
+
+  body::before {
+    content: "";
+    display: block;
+    position: absolute;
+    background: #282c34;
+    padding-bottom: 1%;
+    background-image: url("../static/assets/background.png");
+    background-size: cover;
+    background-position: center bottom;
+    position: fixed;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    justify-content: center;
+    align-items: flex-start;
+    opacity: 0.3;
+  }
+
+  #upperRightLogo {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 70px;
+    height: 70px;
+  }
+
+  #bottomRightImage {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .color1 {
+    color: #ef504f;
+  }
+
+  .color2 {
+    color: #000000;
+  }
+
+  .container {
+    width: 90%;
+    height: 80%;
+    max-width: 1200px;
+    margin: 50px auto 0;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+
+  button {
+    background-color: #29023f;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 140px;
+    height: 55px;
+    font-size: 16px;
+    margin-top: 50px;
+  }
+
+  #bottomLeftImage {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    width: 60px;
+  }
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .verify-container {
+    margin-top: 50px;
+    padding: 20px;
+  }
+
+  .document-container {
+    margin-top: 50px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .download {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .document-name {
+    background-color: rgba(169, 169, 169, 0.4);
+    border-radius: 5px;
+    border: none;
+    height: 55px;
+    margin-top: 50px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .triangle {
+    margin-top: 50px;
+    width: 0;
+    height: 0;
+    border-top: 70px solid transparent;
+    border-bottom: 70px solid transparent;
+    border-left: 50px solid #29023f;
+    position: absolute;
+    left: 55%;
+    transform: translateX(-50%);
+    z-index: -1;
+  }
+</style>
+<body>
+<div class="container">
+  <div class="row">
+    <h1>
+      <span class="color1">PerunAtalaPrism</span>
+      <span class="color2"> Wallet </span>
+    </h1>
+  </div>
+  <div class="content">
+    <div class="verify-container">
+      <h2>You have received the required number of signatures!</h2>
+      <button onclick="verify()">Verify</button>
+      <p class="response-message" id="responseMessage"></p>
+    </div>
+    <div class="triangle"></div>
+    <div class="document-container" id="download" style="display:none">
+      <h2>The Document is now signed:</h2>
+      <div class="download">
+        <div class="document-name">
+          <p>residence_permit_signed.json</p>
+        </div>
+        <button onclick="download()">Download Document</button>
+      </div>
+    </div>
+  </div>
+</div>
+<img
+        id="upperRightLogo"
+        src="../static/assets/polycrypt-logo.ico"
+        alt="Bottom Left Logo"
+/>
+<img id="bottomLeftImage" src="../static/assets/perun_logo.png" alt="Logo" />
+</body>
+<script>
+  function verify() {
+    fetch(`/api/call/verify`)
+            .then((response) => response.json())
+            .then((data) => {
+              // Handle the response from the server if needed
+              console.log(data);
+              showDocument(data);
+            })
+            .catch((error) => {
+              // Handle errors
+              console.error("Error:", error);
+              responseMessage.innerHTML = "Error: Something went wrong.";
+            });
+  }
+
+  function showDocument(data) {
+    var download = document.getElementById("download");
+    if (download) {
+      download.dataset.documentData = JSON.stringify(data);
+      download.style.display = "block";
+    }
+  }
+
+  function download() {
+    var download = document.getElementById("download");
+    if (download && download.dataset.documentData) {
+      var data = JSON.parse(download.dataset.documentData);
+      var blob = new Blob([JSON.stringify(data)], {
+        type: "application/json",
+      });
+
+      var link = document.createElement("a");
+      link.download = "residence_permit_signed.json";
+      link.href = URL.createObjectURL(blob);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+</script>
+</html>

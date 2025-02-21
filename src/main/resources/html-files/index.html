@@ -1,0 +1,112 @@
+<html>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
+    }
+
+    body::before {
+        content: "";
+        display: block;
+        position: absolute;
+        background: #282c34;
+        padding-bottom: 1%;
+        background-image: url("../static/assets/background.png");
+        background-size: cover;
+        background-position: center bottom;
+        position: fixed;
+        z-index: -1;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        justify-content: center;
+        align-items: flex-start;
+        opacity: 0.30;
+    }
+
+    #upperRightLogo {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 70px;
+        height: 70px;
+    }
+
+    .color1 {
+        color: #ef504f;
+    }
+
+    .color2 {
+        color: #000000;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        height: 80%;
+        margin: 50px auto 0;
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+    }
+
+    button {
+        align-self: center;
+        background-color: #29023f;
+        color: #fff;
+        padding: 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 200px;
+        height: 55px;
+        font-size: 16px;
+        margin-top: 20px;
+    }
+
+    .signature {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #perun-logo {
+        width: 120px;
+        margin-top: 70px;
+    }
+</style>
+
+<body>
+<div class="container">
+    <div class="row">
+        <h1>
+            <span class="color1">PerunAtalaPrism</span>
+            <span class="color2"> Wallet </span>
+        </h1>
+    </div>
+
+    <div class="signature">
+        <button type="button" onclick="location.href='/alice'">
+            Go to Alice Page
+        </button>
+        <button type="button" onclick="location.href='/signer'">
+            Go to Signer Page
+        </button>
+    </div>
+</div>
+
+<img
+        id="upperRightLogo"
+        src="../static/assets/polycrypt-logo.ico"
+        alt="Top Right Logo"
+/>
+</body>
+</html>
