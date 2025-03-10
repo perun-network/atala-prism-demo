@@ -19,9 +19,12 @@ application {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
+    implementation("com.github.perun-network:atala-prism-threshold:v0.1.0")
+
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-content-negotiation")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
@@ -31,4 +34,7 @@ dependencies {
     implementation("io.ktor:ktor-server-config-yaml")
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+
+    implementation("io.github.microutils:kotlin-logging:3.0.5")
+    implementation("ch.qos.logback:logback-classic:1.4.11")
 }
