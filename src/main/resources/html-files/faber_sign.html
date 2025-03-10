@@ -1,0 +1,270 @@
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
+    }
+    body::before {
+      content: "";
+      display: block;
+      position: absolute;
+      background: #282c34;
+      padding-bottom: 1%;
+      background-image: url("../static/assets/background.png");
+      background-size: cover;
+      background-position: center bottom;
+      position: fixed;
+      z-index: -1;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      opacity: 0.30;
+    }
+    #upperRightLogo {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      width: 70px;
+      height: 70px;
+    }
+    .color1 {
+      color: #ef504f;
+    }
+    .color2 {
+      color: #000000;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      height: 80%;
+      margin: 50px auto 0;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+    }
+    button {
+      background-color: #29023f;
+      color: #fff;
+      padding: 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 200px;
+      height: 55px;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+    .form-container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .shared-info {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+    }
+    .shared-info .form-group {
+      flex: 1;
+      margin: 0 10px;
+    }
+    .shared-info label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .shared-info input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    .signer-box {
+      flex: 1;
+      min-width: 300px;
+      max-width: 45%;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      margin: 10px;
+      box-sizing: border-box;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    .document-radio {
+      margin-top: 10px;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 2px;
+      display: none;
+    }
+    .document-radio input[type="radio"] {
+      width: 20px;
+      margin: 0;
+    }
+    .document-radio label {
+      font-size: 12px;
+      font-weight: normal;
+      margin: 0;
+      cursor: pointer;
+    }
+    .signature-box {
+      display: none;
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: #f1f1f1;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <h1>
+      <span class="color1">Faber</span>
+      <span class="color2"> Sign Page</span>
+    </h1>
+  </div>
+  <form id="faber-sign-form">
+    <h2>Faber Signers' Details</h2>
+    <div class="shared-info">
+      <div class="form-group">
+        <label for="shared-ssid">SSID:</label>
+        <input type="text" id="shared-ssid" name="shared-ssid" placeholder="Loading..." disabled>
+      </div>
+      <div class="form-group">
+        <label for="shared-publicKey">Public Key:</label>
+        <input type="text" id="shared-publicKey" name="shared-publicKey" placeholder="Loading..." disabled>
+      </div>
+      <div class="form-group">
+        <label for="shared-big-R">Big R Point:</label>
+        <input type="text" id="shared-big-R" name="shared-big-R" placeholder="Loading..." disabled>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="signer-box">
+        <h3>Signer 1</h3>
+        <div class="form-group">
+          <label for="signer1-name">Name:</label>
+          <input type="text" id="signer1-name" name="signer1-name" placeholder="Loading..." disabled>
+        </div>
+        <div class="document-radio" id="signer1-doc-radio">
+          <input type="radio" id="signer1-doc" name="signer-doc-group" disabled>
+          <label for="signer1-doc" id="signer1-doc-label"></label>
+        </div>
+        <button type="button" id="signer1-sign-btn" disabled>Sign</button>
+        <div class="signature-box" id="signer1-signature-box">
+          <p id="signer1-signature-text"></p>
+        </div>
+      </div>
+      <div class="signer-box">
+        <h3>Signer 2</h3>
+        <div class="form-group">
+          <label for="signer2-name">Name:</label>
+          <input type="text" id="signer2-name" name="signer2-name" placeholder="Loading..." disabled>
+        </div>
+        <div class="document-radio" id="signer2-doc-radio">
+          <input type="radio" id="signer2-doc" name="signer-doc-group" disabled>
+          <label for="signer2-doc" id="signer2-doc-label"></label>
+        </div>
+        <button type="button" id="signer2-sign-btn" disabled>Sign</button>
+        <div class="signature-box" id="signer2-signature-box">
+          <p id="signer2-signature-text"></p>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<img id="upperRightLogo" src="../static/assets/polycrypt-logo.ico" alt="Top Right Logo">
+<script>
+  function fetchSigners() {
+    fetch("/api/call/selected_signers")
+            .then(response => response.json())
+            .then(data => {
+              if (data.signers && Array.isArray(data.signers)) {
+                const selectedSigners = data.signers; // Only take two signers
+                selectedSigners.forEach((signer, index) => {
+                  const input = document.getElementById(`signer${index + 1}-name`);
+                  if (input) {
+                    input.value = signer.name;
+                  }
+                });
+              } else {
+                console.error("Unexpected data format:", data);
+              }
+            })
+            .catch(error => console.error("Error fetching signers:", error));
+  }
+
+  function fetchPublicData() {
+    fetch("/api/call/public_data")
+            .then(response => response.json())
+            .then(data => {
+              if (data.ssid && data.publicKey && data.bigR) {
+                const sharedSsid = document.getElementById("shared-ssid");
+                sharedSsid.value = data.ssid;
+                const publicKey = document.getElementById("shared-publicKey");
+                publicKey.value = data.publicKey;
+                const bigR = document.getElementById("shared-big-R");
+                bigR.value = data.bigR;
+              } else {
+                console.error("Unexpected data format:", data);
+              }
+            })
+            .catch(error => console.error("Error fetching signers:", error));
+  }
+
+  function attachSignButtonListeners() {
+    for (let i = 1; i <= 2; i++) {
+      const signBtn = document.getElementById(`signer${i}-sign-btn`);
+      if (signBtn) {
+        signBtn.addEventListener("click", function() {
+          fetch(`/api/call/signature?signerId=${i}`)
+                  .then(response => response.json())
+                  .then(data => {
+                    if (data.signature) {
+                      const sigText = document.getElementById(`signer${i}-signature-text`);
+                      sigText.textContent = data.signature;
+                      document.getElementById(`signer${i}-signature-box`).style.display = 'block';
+                    } else {
+                      console.error("No signature returned for signer", i);
+                    }
+                  })
+                  .catch(error => console.error(`Error fetching signature for signer ${i}:`, error));
+        });
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    fetchSigners();
+    fetchPublicData();
+    attachSignButtonListeners();
+  });
+</script>
+</body>
+</html>

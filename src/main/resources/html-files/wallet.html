@@ -1,149 +1,148 @@
 <html>
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
-    }
-
-    body::before {
-        content: "";
-        display: block;
-        position: absolute;
-        background: #282c34;
-        padding-bottom: 1%;
-        background-image: url("../static/assets/background.png");
-        background-size: cover;
-        background-position: center bottom;
-        position: fixed;
-        z-index: -1;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        justify-content: center;
-        align-items: flex-start;
-        opacity: 0.30;
-    }
-
-    #upperRightLogo {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        width: 70px;
-        height: 70px;
-    }
-
-    #bottomRightImage {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        width: 40px;
-        height: 40px;
-    }
-
-    .color1 {
-        color: #ef504f;
-    }
-
-    .color2 {
-        color: #000000;
-    }
-
-    .container {
-        width: 90%;
-        max-width: 1200px;
-        height: 80%;
-        margin: 50px auto 0;
-    }
-
-    .row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-    }
-
-    button {
-        align-self: flex-end;
-        background-color: #29023f;
-        color: #fff;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        width: 140px;
-        height: 55px;
-        font-size: 16px;
-    }
-
-    .wallet-container {
-        padding: 20px;
-        margin-top: 30px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-
-    .wallet-info {
-        display: flex;
-        align-items: center;
-        text-align: left;
-        justify-content: space-between;
-        padding: 20px;
-        height: 100%;
-    }
-
-    .wallet-info p {
-        align-self: flex-start;
-        margin: 9px 0;
-        width: 230px;
-    }
-
-    .documents {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .documents label {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    .documents input[type="checkbox"] {
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        margin-right: 5px;
-        width: 16px;
-        height: 16px;
-        border: 2px solid #29023f;
-        border-radius: 50%;
-        outline: none;
-        vertical-align: middle;
-    }
-
-    .documents input[type="checkbox"]:checked {
-        background-color: #ef504f;
-        border-color: #29023f;
-    }
-
-    .signature {
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    #perun-logo {
-        align-self: flex-start;
-        margin-top: 70px;
-        width: 120px;
-    }
-</style>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
+        }
+        body::before {
+            content: "";
+            display: block;
+            position: absolute;
+            background: #282c34;
+            padding-bottom: 1%;
+            background-image: url("../static/assets/background.png");
+            background-size: cover;
+            background-position: center bottom;
+            position: fixed;
+            z-index: -1;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            justify-content: center;
+            align-items: flex-start;
+            opacity: 0.30;
+        }
+        #upperRightLogo {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 70px;
+            height: 70px;
+        }
+        #bottomRightImage {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+        }
+        .color1 {
+            color: #ef504f;
+        }
+        .color2 {
+            color: #000000;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            height: 80%;
+            margin: 50px auto 0;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+        button {
+            align-self: flex-end;
+            background-color: #29023f;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 140px;
+            height: 55px;
+            font-size: 16px;
+        }
+        .wallet-container {
+            padding: 20px;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            justify-content: space-between;
+            padding: 20px;
+            height: 100%;
+        }
+        .wallet-info p {
+            align-self: flex-start;
+            margin: 9px 0;
+            width: 230px;
+        }
+        /* Center the documents section and its content */
+        .documents {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .documents label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .documents input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            margin-bottom: 5px;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #29023f;
+            border-radius: 50%;
+            outline: none;
+            vertical-align: middle;
+        }
+        .documents input[type="checkbox"]:checked {
+            background-color: #ef504f;
+            border-color: #29023f;
+        }
+        .signature {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+        #perun-logo {
+            align-self: flex-start;
+            margin-top: 70px;
+            width: 120px;
+        }
+        pre#jsonDisplay {
+            white-space: pre-wrap;
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 300px;
+            overflow: auto;
+            border: 1px solid #ccc;
+            display: none;  /* Initially hidden */
+        }
+    </style>
+</head>
 <body>
 <div class="container">
     <div class="row">
@@ -172,66 +171,67 @@
         </div>
         <div class="documents">
             <h3>Documents:</h3>
-                <label>
-                    <input
-                            type="checkbox"
-                            name="document"
-                            value="residence_permit.json"
-                            onChange="handleDocumentSelection(this)"
-                    />
-                    residence-permit.json
-                </label>
-            <pre id="jsonDisplay" style="
-                    white-space: pre-wrap;
-                    background: #f4f4f4;
-                    padding: 10px;
-                    border-radius: 5px;
-                    width: 90%;
-                    max-width: 600px;
-                    max-height: 300px;
-                    overflow: auto;
-                    border: 1px solid #ccc;
-                    "></pre>
+            <label>
+                <input
+                        type="checkbox"
+                        name="document"
+                        value="residence_permit.json"
+                        onChange="handleDocumentSelection(this)"
+                />
+                residence-permit.json
+            </label>
+            <pre id="jsonDisplay"></pre>
         </div>
         <div class="signature">
-            <img
-                    id="perun-logo"
-                    src="../static/assets/perun_logo.png"
-                    alt="Center Logo"
-            />
+            <img id="perun-logo" src="../static/assets/perun_logo.png" alt="Center Logo" />
             <button type="button" onclick="handleRequestSelection()">
                 Get Signature
             </button>
         </div>
     </div>
 </div>
-<img
-        id="upperRightLogo"
-        src="../static/assets/polycrypt-logo.ico"
-        alt="Bottom Left Logo"
-/>
-</body>
+<img id="upperRightLogo" src="../static/assets/polycrypt-logo.ico" alt="Bottom Left Logo" />
 <script>
     async function handleDocumentSelection(checkbox) {
-
+        const jsonDisplay = document.getElementById("jsonDisplay");
         if (checkbox.checked) {
             try {
                 const response = await fetch(`/static/document/residence_permit.json`);
                 if (!response.ok) throw new Error("Failed to load JSON document");
                 const jsonData = await response.json();
-                document.getElementById("jsonDisplay").textContent = JSON.stringify(jsonData, null, 4);
+                jsonDisplay.textContent = JSON.stringify(jsonData, null, 4);
+                jsonDisplay.style.display = 'block';  // Show display box when document is selected
             } catch (error) {
                 console.error(error);
                 alert("Failed to load JSON document");
             }
-        } else{
-            document.getElementById("jsonDisplay").textContent = "";
+        } else {
+            jsonDisplay.textContent = "";
+            jsonDisplay.style.display = 'none';  // Hide display box when document is deselected
         }
     }
 
-    function handleRequestSelection() {
-        fetch("/api/call/setup");
-        location.href = "/import";
+    async function handleRequestSelection() {
+        const jsonText = document.getElementById("jsonDisplay").textContent;
+        if (!jsonText) {
+            alert("Please select a document before requesting a signature.");
+            return;
+        }
+        try {
+            // Send the document content to the backend using POST
+            const response = await fetch("/api/call/setup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: jsonText
+            });
+            if (!response.ok) throw new Error("Failed to send document to backend");
+            // After successful submission, redirect to the import page
+            location.href = "/import";
+        } catch (error) {
+            console.error(error);
+            alert("Failed to send document to backend");
+        }
     }
 </script>
+</body>
 </html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #upperRightLogo {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      width: 70px;
+      height: 70px;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      position: absolute;
+      background: #282c34;
+      padding-bottom: 1%;
+      background-image: url("../static/assets/background.png");
+      background-size: cover;
+      background-position: center bottom;
+      position: fixed;
+      z-index: -1;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      opacity: 0.30;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      height: 80%;
+      margin: 50px auto 0;
+      text-align: center;
+    }
+
+    button {
+      background-color: #29023f;
+      color: #fff;
+      padding: 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 200px;
+      height: 55px;
+      font-size: 16px;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #ef504f;
+    }
+
+    .form-container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .signer-box {
+      flex: 1;
+      min-width: 250px;
+      max-width: 30%;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      margin: 10px;
+      box-sizing: border-box;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-sizing: border-box; /* Ensure padding is included in the width */
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <h1>Faber Credential Institute</h1>
+  </div>
+
+  <form id="signers-form">
+    <h2>Enter Signers' Details</h2>
+
+    <div class="form-container">
+      <div class="signer-box">
+        <h3>Signer 1</h3>
+        <div class="form-group">
+          <label for="signer1-name">Name:</label>
+          <input type="text" id="signer1-name" name="signer1-name">
+        </div>
+      </div>
+
+      <div class="signer-box">
+        <h3>Signer 2</h3>
+        <div class="form-group">
+          <label for="signer2-name">Name:</label>
+          <input type="text" id="signer2-name" name="signer2-name">
+        </div>
+      </div>
+
+      <div class="signer-box">
+        <h3>Signer 3</h3>
+        <div class="form-group">
+          <label for="signer3-name">Name:</label>
+          <input type="text" id="signer3-name" name="signer3-name">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit">Submit</button>
+  </form>
+</div>
+<img
+        id="upperRightLogo"
+        src="../static/assets/polycrypt-logo.ico"
+        alt="Top Right Logo"
+/>
+</body>
+<script>
+  function handleSignersSubmission(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const submitButton = document.querySelector("button[type='submit']");
+    submitButton.disabled = true;
+    submitButton.style.backgroundColor = "#888"; // Grey out button
+    submitButton.textContent = "Loading...";
+
+    const formData = {
+      signer1: document.getElementById("signer1-name").value,
+      signer2: document.getElementById("signer2-name").value,
+      signer3: document.getElementById("signer3-name").value
+    };
+
+    fetch("/api/call/signers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    })
+            .then(response => response.json())
+            .then((data) => {
+              console.log(data);
+              window.location.href = "/faber_select";
+            })
+            .catch(error => {
+              console.error("Error:", error);
+              submitButton.disabled = false;
+              submitButton.textContent = "Submit"; // Restore button text in case of error
+              submitButton.style.backgroundColor = "#29023f"; // Restore original color
+            });
+  }
+
+  // Attach event listener to the form
+  document.getElementById("signers-form").addEventListener("submit", handleSignersSubmission);
+</script>
+</html>
