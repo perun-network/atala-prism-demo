@@ -9,9 +9,24 @@ object ServerHandler {
         return templateContent
     }
 
-    fun handleSigner(): String {
-        val templateUrl = this::class.java.classLoader.getResource("html-files/signer.html")
-            ?: throw IllegalStateException("Template signer.html not found")
+    fun handleFaber(): String {
+        val templateUrl = this::class.java.classLoader.getResource("html-files/faber.html")
+            ?: throw IllegalStateException("Template faber.html not found")
+        val templateContent = templateUrl.openStream().bufferedReader().use { it.readText() }
+
+        return templateContent
+    }
+
+    fun handleFaberSelect(): String {
+        val templateUrl = this::class.java.classLoader.getResource("html-files/faber_select.html")
+        ?: throw IllegalStateException("Template select.html not found")
+        val templateContent = templateUrl.openStream().bufferedReader().use { it.readText() }
+        return templateContent
+    }
+
+    fun handleFaberSigning(): String {
+        val templateUrl = this::class.java.classLoader.getResource("html-files/faber_sign.html")
+            ?: throw IllegalStateException("Template faber_sign.html not found")
         val templateContent = templateUrl.openStream().bufferedReader().use { it.readText() }
 
         return templateContent
@@ -63,8 +78,8 @@ object ServerHandler {
 
     fun handleVerify(): String {
         // Load the wallet.html template from the classpath.
-        val templateUrl = this::class.java.classLoader.getResource("html-files/export.html")
-            ?: throw IllegalStateException("Template import.html not found")
+        val templateUrl = this::class.java.classLoader.getResource("html-files/verify.html")
+            ?: throw IllegalStateException("Template verify.html not found")
 
         val templateContent = templateUrl.openStream().bufferedReader().use { it.readText() }
 
