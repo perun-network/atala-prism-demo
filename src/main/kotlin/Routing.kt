@@ -1,27 +1,22 @@
 package perun_network.threshold_ecdsa_demo
 
+// ecdsa_threshold
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.json.*
-
-// backend
-import perun_network.threshold_ecdsa_demo.backend.*
-
-// ecdsa_threshold
+import org.kotlincrypto.hash.sha2.SHA256
 import perun_network.ecdsa_threshold.precomp.generateSessionId
-import perun_network.ecdsa_threshold.precomp.publicKeyFromShares
-import perun_network.threshold_ecdsa_demo.backend.BackendSigner
 import perun_network.ecdsa_threshold.sign.Signer
+import perun_network.threshold_ecdsa_demo.backend.BackendSigner
+import perun_network.threshold_ecdsa_demo.backend.ThresholdSigning
 import perun_network.threshold_ecdsa_demo.backend.response.NameResponse
 import perun_network.threshold_ecdsa_demo.backend.response.PublicDataResponse
 import perun_network.threshold_ecdsa_demo.backend.response.SignerDTO
 import perun_network.threshold_ecdsa_demo.backend.response.SignerResponse
 import perun_network.threshold_ecdsa_demo.frontend.ServerHandler
-import org.kotlincrypto.hash.sha2.SHA256
 
 private val backend = ThresholdSigning
 
