@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.perun-network:atala-prism-threshold:v0.1.2")
+    implementation("com.github.perun-network:atala-prism-threshold:v0.1.3")
 
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-content-negotiation")

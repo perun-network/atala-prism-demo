@@ -263,7 +263,7 @@ fun Application.configureRouting() {
                     backend.logger.info("Key generation finished.")
 
                     // Auxiliary information process.
-                    val publicPrecomps = backend.auxInfo()
+                    backend.auxInfo()
                     backend.logger.info("Auxiliary info finished.")
 
                     call.respond(HttpStatusCode.OK, SignerResponse(backend.ssid.toString()))
@@ -358,7 +358,7 @@ fun Application.configureRouting() {
 
                     backend.logger.info("Signing document for signer: $signerName")
                     val hash = SHA256().digest(storedDocumentStr.toByteArray())
-                    backend.logger.info("Sign the hash: ${hash.toHexString()}");
+                    backend.logger.info("Sign the hash: ${hash.toHexString()}")
 
                     // Perform signing operation.
                     val signer = backend.selectedSigners.filter { it.value.name == signerName }.values.first()
