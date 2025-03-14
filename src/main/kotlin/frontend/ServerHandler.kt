@@ -1,4 +1,4 @@
-package perun_network_threshold_ecdsa.frontend
+package perun_network.threshold_ecdsa_demo.frontend
 
 object ServerHandler {
     fun handleHost(): String {
@@ -32,7 +32,7 @@ object ServerHandler {
         return templateContent
     }
 
-    fun handleWallet(): String {
+    fun handleAlice(): String {
         // Create an instance of PageData with the desired values.
         val pageData = PageData(
             name = "ALICE",
@@ -46,9 +46,8 @@ object ServerHandler {
             birthDate = "1999-07-17"
         )
 
-        // Load the wallet.html template from the classpath.
-        val templateUrl = this::class.java.classLoader.getResource("html-files/wallet.html")
-            ?: throw IllegalStateException("Template wallet.html not found")
+        val templateUrl = this::class.java.classLoader.getResource("html-files/alice.html")
+            ?: throw IllegalStateException("Template alice.html not found")
         val templateContent = templateUrl.openStream().bufferedReader().use { it.readText() }
 
         // Replace placeholders in the template with data from pageData.
@@ -67,7 +66,7 @@ object ServerHandler {
     }
 
     fun handleImport(): String {
-        // Load the wallet.html template from the classpath.
+        // Load the alice.html template from the classpath.
         val templateUrl = this::class.java.classLoader.getResource("html-files/import.html")
             ?: throw IllegalStateException("Template import.html not found")
 
@@ -77,7 +76,6 @@ object ServerHandler {
     }
 
     fun handleVerify(): String {
-        // Load the wallet.html template from the classpath.
         val templateUrl = this::class.java.classLoader.getResource("html-files/verify.html")
             ?: throw IllegalStateException("Template verify.html not found")
 

@@ -1,10 +1,10 @@
-package perun_network_threshold_ecdsa.backend
+package perun_network.threshold_ecdsa_demo.backend
 
+import kotlinx.serialization.json.*
 import mu.KotlinLogging
-import perun_network.ecdsa_threshold.ecdsa.Point
-import perun_network.ecdsa_threshold.ecdsa.PublicKey
+import org.kotlincrypto.hash.sha2.SHA256
+import perun_network.ecdsa_threshold.ecdsa.*
 import perun_network.ecdsa_threshold.precomp.PublicPrecomputation
-import perun_network.ecdsa_threshold.sign.Signer
 import perun_network.ecdsa_threshold.sign.aux.AuxRound1Broadcast
 import perun_network.ecdsa_threshold.sign.aux.AuxRound2Broadcast
 import perun_network.ecdsa_threshold.sign.aux.AuxRound3Broadcast
@@ -22,7 +22,8 @@ object ThresholdSigning {
     var publicKey : PublicKey? = null
     var ssid : ByteArray? = null
     var bigR : Point? = null
-    private val documents = mutableListOf<String>()
+    private lateinit var document : String
+    private lateinit var signature : Signature
 
     fun keyGen() {
         val partyIds = signers.keys.toList()
@@ -134,8 +135,112 @@ object ThresholdSigning {
         return referenceBigR
     }
 
-    fun addDocument(newDoc : String) {
-        documents.add(newDoc)
+    fun combinePartialSignatures(bigRString: String, firstPartialSignatureString: String, secondPartialSignatureString: String) : Signature {
+
+        val bigR = Point.fromByteArray(bigRString.decodeHex())
+        if (this.bigR != bigR) {
+            logger.info("Inconsistent big R")
+        }
+
+        val r = bigR.xScalar()
+        val firstPartialSignature = PartialSignature.fromByteArray(firstPartialSignatureString.decodeHex())
+        val secondPartialSignature = PartialSignature.fromByteArray(secondPartialSignatureString.decodeHex())
+
+        if (!firstPartialSignature.ssid.contentEquals(secondPartialSignature.ssid)) {
+            logger.info("inconsistent ssid")
+            throw IllegalStateException("Inconsistent ssid")
+        }
+
+        logger.info("Received signatures from: ${firstPartialSignature.id} and ${secondPartialSignature.id}")
+
+        val partialSignatures = listOf(firstPartialSignature, secondPartialSignature)
+        var sigma = Scalar.zero()
+        for (partial in partialSignatures) {
+            sigma = sigma.add(partial.sigmaShare)
+        }
+
+        val signature = Signature.newSignature(r, sigma)
+        this.signature = signature
+        val hash = SHA256().digest(document.toByteArray())
+
+        if (!signature.verifySecp256k1(hash, publicKey!!)) {
+            throw IllegalStateException("Inconsistent signature")
+        }
+
+        return signature
     }
+
+    fun addDocument(newDoc : String) {
+        val incomingDocJson: JsonElement = Json.parseToJsonElement(newDoc)
+        this.document = normalizeJson(incomingDocJson)
+    }
+
+    fun getDocument(): String {
+        return document
+    }
+
+    fun getSignature() : ByteArray {
+        if (!::signature.isInitialized) {
+            throw IllegalStateException("Signature is null")
+        }
+        return signature.toSecp256k1Signature()
+    }
+
+    fun verifySignature(signatureStr: String, publicKeyStr: String) : Boolean {
+        val signature = signatureStr.decodeHex()
+        val publicKey = PublicKey.newPublicKey(publicKeyStr.decodeHex())
+        val hash = SHA256().digest(document.toByteArray())
+
+        return Signature.fromSecp256k1Signature(signature).verifySecp256k1(hash, publicKey)
+    }
+
+    fun scalePrecomputation() : Pair<Point, Map<Int, PublicPrecomputation>> {
+        val publicPoints = mutableMapOf<Int, Point>()
+        val publicAllPrecomps = mutableMapOf<Int, Map<Int, PublicPrecomputation>>()
+        for (i in selectedSigners.keys.toList()) {
+            val (publicPrecomp, publicPoint) = selectedSigners[i]!!.thresholdSigner.scalePrecomputations(selectedSigners.keys.toList())
+            publicPoints[i] = publicPoint
+            publicAllPrecomps[i] = publicPrecomp
+        }
+
+        // Check output consistency
+        val referencePoint = publicPoints[selectedSigners.keys.first()]!!
+        val referencePrecomp = publicAllPrecomps[selectedSigners.keys.first()]!!
+        for (i in selectedSigners.keys) {
+            if (publicPoints[i] != referencePoint) throw IllegalStateException("Inconsistent public Key")
+        }
+
+        return referencePoint to referencePrecomp
+    }
+
 }
 
+fun String.decodeHex(): ByteArray {
+    check(length % 2 == 0) { "Must have an even length" }
+
+    return this.lowercase().chunked(2)
+        .map { it.toInt(16).toByte() }
+        .toByteArray()
+}
+
+// Helper function to normalize a JsonElement by sorting object keys.
+fun normalizeJson(json: JsonElement): String {
+    return when (json) {
+        is JsonObject -> {
+            val sortedEntries = json.entries.sortedBy { it.key }
+            val normalizedEntries = sortedEntries.map { (key, value) ->
+                "\"$key\":${normalizeJson(value)}"
+            }
+            "{${normalizedEntries.joinToString(",")}}"
+        }
+        is JsonArray -> {
+            val normalizedItems = json.map { normalizeJson(it) }
+            "[${normalizedItems.joinToString(",")}]"
+        }
+        is JsonPrimitive -> {
+            // For primitives, use their JSON representation.
+            json.toString()
+        }
+        else -> json.toString()
+    }
+}

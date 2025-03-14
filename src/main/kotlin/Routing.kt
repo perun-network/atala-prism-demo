@@ -1,30 +1,27 @@
-package perun_network_threshold_ecdsa
+package perun_network.threshold_ecdsa_demo
 
-import com.typesafe.config.ConfigException.Null
-import mu.KotlinLogging
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.json.*
 
 // backend
-import perun_network_threshold_ecdsa.backend.*
+import perun_network.threshold_ecdsa_demo.backend.*
 
 // ecdsa_threshold
 import perun_network.ecdsa_threshold.precomp.generateSessionId
 import perun_network.ecdsa_threshold.precomp.publicKeyFromShares
-import perun_network_threshold_ecdsa.backend.BackendSigner
+import perun_network.threshold_ecdsa_demo.backend.BackendSigner
 import perun_network.ecdsa_threshold.sign.Signer
-import perun_network_threshold_ecdsa.backend.response.NameResponse
-import perun_network_threshold_ecdsa.backend.response.PublicDataResponse
-import perun_network_threshold_ecdsa.backend.response.SignerDTO
-import perun_network_threshold_ecdsa.backend.response.SignerResponse
-import perun_network_threshold_ecdsa.frontend.ServerHandler
-import java.nio.charset.Charset
-
-import java.util.Base64
+import perun_network.threshold_ecdsa_demo.backend.response.NameResponse
+import perun_network.threshold_ecdsa_demo.backend.response.PublicDataResponse
+import perun_network.threshold_ecdsa_demo.backend.response.SignerDTO
+import perun_network.threshold_ecdsa_demo.backend.response.SignerResponse
+import perun_network.threshold_ecdsa_demo.frontend.ServerHandler
+import org.kotlincrypto.hash.sha2.SHA256
 
 private val backend = ThresholdSigning
 
@@ -42,7 +39,7 @@ fun Application.configureRouting() {
 
         get("/alice") {
             try {
-                val renderedHtml = ServerHandler.handleWallet()
+                val renderedHtml = ServerHandler.handleAlice()
                 call.respondText(renderedHtml, contentType = ContentType.Text.Html)
             } catch (exc: IllegalStateException) {
                 call.respond(HttpStatusCode.NotFound)
@@ -95,16 +92,69 @@ fun Application.configureRouting() {
         }
 
         route("/api/call") {
-            get("/verify") {
-
+            get("/signature") {
+                if (backend.bigR == null || backend.publicKey == null) {
+                    call.respond(HttpStatusCode.NotFound, "Signature data not available.")
+                } else {
+                    try {
+                        val signature = backend.getSignature()
+                        call.respond(
+                            HttpStatusCode.OK, mapOf(
+                                "signature" to signature.toHexString().uppercase(),
+                                "publicKey" to backend.publicKey!!.value.toHexString().uppercase()
+                            )
+                        )
+                    } catch (exc: Exception) {
+                        call.respond(HttpStatusCode.InternalServerError, "Signature data not available.")
+                        return@get
+                    }
+                }
             }
 
-            get("/sign") {
+            post("/verify") {
+                // Expect JSON payload with "signature" and "publicKey"
+                val formData = call.receive<Map<String, String>>()
+                val signatureStr = formData["signature"]
+                val publicKeyStr = formData["publicKey"]
 
+                if (signatureStr == null || publicKeyStr == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Signature and Public Key must be provided.")
+                    return@post
+                }
+
+                try {
+                    val isValid = backend.verifySignature(signatureStr, publicKeyStr)
+                    backend.logger.info("Signature verification: $isValid")
+                    if (isValid) {
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest, "Verification failed")
+                    }
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, "Error during verification")
+                }
             }
 
-            get("/import") {
+            post("/sign") {
+                // Read the request body as JSON and deserialize it
+                val formData = call.receive<Map<String, String>>()
+                // Retrieve backend.signers' names.
+                val bigR = formData["bigR"]
+                val firstPartialSig = formData["firstPartialSignature"]
+                val secondPartialSignature = formData["secondPartialSignature"]
 
+                if (bigR == null || firstPartialSig == null || secondPartialSignature == null) {
+                    call.respond(HttpStatusCode.BadRequest, "All fields must be provided.")
+                    return@post
+                }
+                try {
+                    val signature = backend.combinePartialSignatures(bigR, firstPartialSig, secondPartialSignature)
+                    backend.logger.info("Generated the signature: ${signature.toSecp256k1Signature().toHexString().uppercase()}")
+                    call.respond(HttpStatusCode.OK)
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@post
+                }
             }
 
             post("/setup") {
@@ -177,6 +227,11 @@ fun Application.configureRouting() {
                     return@post
                 }
 
+                if (signer1Name == signer2Name || signer3Name == signer1Name || signer2Name == signer3Name) {
+                    call.respond(HttpStatusCode.BadRequest, "Signers must have different names.")
+                    return@post
+                }
+
                 backend.ssid = generateSessionId()
 
                 backend.signers[1] = BackendSigner(
@@ -205,20 +260,23 @@ fun Application.configureRouting() {
                         threshold = 2
                     )
                 )
-                backend.logger.info("Generated the ssid: ${backend.ssid}")
+                backend.logger.info("Generated the ssid: ${backend.ssid!!.toHexString().uppercase()}")
 
                 // Start key generation process.
-                backend.keyGen()
-                backend.logger.info("Key generation finished.")
+                try {
+                    backend.keyGen()
+                    backend.logger.info("Key generation finished.")
 
-                // Auxiliary information process.
-                val publicPrecomps = backend.auxInfo()
-                backend.logger.info("Auxiliary info finished.")
+                    // Auxiliary information process.
+                    val publicPrecomps = backend.auxInfo()
+                    backend.logger.info("Auxiliary info finished.")
 
-                // Calculate the public key.
-                backend.publicKey = publicKeyFromShares(backend.signers.keys.toList(), publicPrecomps)
+                    call.respond(HttpStatusCode.OK, SignerResponse(backend.ssid.toString()))
+                } catch (e: Exception) {
+                    backend.logger.error(e.toString())
+                    call.respond(HttpStatusCode.BadRequest)
+                }
 
-                call.respond(HttpStatusCode.OK, SignerResponse(backend.ssid.toString()))
             }
 
             post("select_signers") {
@@ -242,7 +300,15 @@ fun Application.configureRouting() {
 
                     // Store selected signers in the backend
                     backend.selectedSigners = backend.signers.filterKeys { it in selectedSigners}
-                    backend.logger.info("Selected signers: $selectedSigners")
+                    backend.logger.info("Selected signers: ${backend.selectedSigners.keys}")
+
+
+
+                    // Scale Secret/Public Precomputations
+                    val (publicPoint, _) = backend.scalePrecomputation()
+                    // Calculate the public key.
+                    backend.publicKey = publicPoint.toPublicKey()
+                    backend.logger.info {"Scaled precomputations finished."}
 
                     // Start pre-signing process.
                     backend.bigR = backend.presign()
@@ -256,19 +322,58 @@ fun Application.configureRouting() {
                 }
             }
 
-            // New endpoint for signing
-            get("/signature") {
-                val signerIdParam = call.request.queryParameters["signerId"]
-                val signerId = signerIdParam?.toIntOrNull()
-                if (signerId == null || !backend.signers.containsKey(signerId)) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid or missing signerId.")
+            get("/document") {
+                try {
+                    val document = backend.getDocument()
+                    if (document.isEmpty()) {
+                        call.respond(HttpStatusCode.NotFound, "No document available.")
+                        return@get
+                    }
+                    call.respond(HttpStatusCode.OK, document)
+                } catch (e: Exception) {
+                    backend.logger.error("Error fetching document: ${e.message}", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Failed to retrieve document.")
+                }
+            }
+
+            get("/partial_sign") {
+                val signerName = call.request.queryParameters["signerName"]
+                val documentParam = call.request.queryParameters["document"]
+                backend.logger.info("Received document: $documentParam and signer: $signerName")
+
+                // Validate signer name
+                if (signerName.isNullOrEmpty() || backend.selectedSigners.filter { it.value.name == signerName }.isEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid or missing signer name.")
                     return@get
                 }
-                // Simulate signature generation.
-                // In a real implementation, replace this with your signing logic.
-                val signatureData = "signature-for-signer-$signerId".toByteArray()
-                val base64Signature = Base64.getEncoder().encodeToString(signatureData)
-                call.respond(HttpStatusCode.OK, mapOf("signature" to base64Signature))
+
+                // Validate document
+                if (documentParam.isNullOrEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, "Document is required.")
+                    return@get
+                }
+
+                try {
+                    val storedDocumentStr = backend.getDocument()
+
+                    // Compare the two JSON objects for equality.
+                    if (storedDocumentStr != documentParam) {
+                        backend.logger.info("Inconsistent document for signing")
+                    }
+
+                    backend.logger.info("Signing document for signer: $signerName")
+                    val hash = SHA256().digest(storedDocumentStr.toByteArray())
+                    backend.logger.info("Sign the hash: ${hash.toHexString()}");
+
+                    // Perform signing operation.
+                    val signer = backend.selectedSigners.filter { it.value.name == signerName }.values.first()
+                    val signature = signer.thresholdSigner.partialSignMessage(hash)
+
+                    call.respond(HttpStatusCode.OK, mapOf("signature" to signature.toByteArray().toHexString().uppercase()))
+                } catch (e: Exception) {
+                    backend.logger.error("Error signing document for $signerName: ${e.message}", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Failed to sign document.")
+                }
             }
         }
 

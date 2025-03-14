@@ -1,4 +1,4 @@
-package perun_network_threshold_ecdsa.frontend
+package perun_network.threshold_ecdsa_demo.frontend
 
 data class PageData (
     val name: String,

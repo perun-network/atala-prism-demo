@@ -1,4 +1,4 @@
-package perun_network_threshold_ecdsa
+package perun_network.threshold_ecdsa_demo
 
 import io.ktor.server.application.*
 

@@ -7,7 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.10"
 }
 
-group = "perun_network_threshold_ecdsa"
+group = "perun_network.threshold_ecdsa_demo"
 version = "0.0.1"
 
 application {
@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.perun-network:atala-prism-threshold:v0.1.0")
+    implementation("com.github.perun-network:atala-prism-threshold:v0.1.2")
 
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-content-negotiation")
@@ -36,5 +36,11 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
     implementation("io.github.microutils:kotlin-logging:3.0.5")
-    implementation("ch.qos.logback:logback-classic:1.4.11")
+    implementation("ch.qos.logback:logback-classic:1.4.12")
+
+    implementation(platform("org.kotlincrypto.hash:bom:0.5.3"))
+    implementation("org.kotlincrypto.hash:sha2")
+
+    implementation("fr.acinq.secp256k1:secp256k1-kmp:0.15.0")
+    implementation("fr.acinq.secp256k1:secp256k1-kmp-jni-jvm:0.15.0")
 }

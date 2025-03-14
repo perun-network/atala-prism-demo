@@ -1,4 +1,4 @@
-package perun_network_threshold_ecdsa.backend.response
+package perun_network.threshold_ecdsa_demo.backend.response
 
 import kotlinx.serialization.Serializable
 
