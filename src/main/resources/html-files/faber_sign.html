@@ -172,10 +172,7 @@
           <label for="signer1-name">Name:</label>
           <input type="text" id="signer1-name" name="signer1-name" placeholder="Loading..." disabled>
         </div>
-        <div class="document-radio" id="signer1-doc-radio">
-          <input type="radio" id="signer1-doc" name="signer-doc-group" disabled>
-          <label for="signer1-doc" id="signer1-doc-label"></label>
-        </div>
+        <div class="document-radio" id="signer1-doc-radio"></div>
         <button type="button" id="signer1-sign-btn" disabled>Sign</button>
         <div class="signature-box" id="signer1-signature-box">
           <p id="signer1-signature-text"></p>
@@ -187,10 +184,7 @@
           <label for="signer2-name">Name:</label>
           <input type="text" id="signer2-name" name="signer2-name" placeholder="Loading..." disabled>
         </div>
-        <div class="document-radio" id="signer2-doc-radio">
-          <input type="radio" id="signer2-doc" name="signer-doc-group" disabled>
-          <label for="signer2-doc" id="signer2-doc-label"></label>
-        </div>
+        <div class="document-radio" id="signer2-doc-radio"></div>
         <button type="button" id="signer2-sign-btn" disabled>Sign</button>
         <div class="signature-box" id="signer2-signature-box">
           <p id="signer2-signature-text"></p>
@@ -206,8 +200,7 @@
             .then(response => response.json())
             .then(data => {
               if (data.signers && Array.isArray(data.signers)) {
-                const selectedSigners = data.signers; // Only take two signers
-                selectedSigners.forEach((signer, index) => {
+                data.signers.forEach((signer, index) => {
                   const input = document.getElementById(`signer${index + 1}-name`);
                   if (input) {
                     input.value = signer.name;
@@ -225,17 +218,48 @@
             .then(response => response.json())
             .then(data => {
               if (data.ssid && data.publicKey && data.bigR) {
-                const sharedSsid = document.getElementById("shared-ssid");
-                sharedSsid.value = data.ssid;
-                const publicKey = document.getElementById("shared-publicKey");
-                publicKey.value = data.publicKey;
-                const bigR = document.getElementById("shared-big-R");
-                bigR.value = data.bigR;
+                document.getElementById("shared-ssid").value = data.ssid;
+                document.getElementById("shared-publicKey").value = data.publicKey;
+                document.getElementById("shared-big-R").value = data.bigR;
               } else {
                 console.error("Unexpected data format:", data);
               }
             })
-            .catch(error => console.error("Error fetching signers:", error));
+            .catch(error => console.error("Error fetching public data:", error));
+  }
+
+  function fetchDocument() {
+    fetch("/api/call/document")
+            .then(response => response.json())
+            .then(doc => {
+              for (let i = 1; i <= 2; i++) {
+                const docContainer = document.getElementById(`signer${i}-doc-radio`);
+                docContainer.innerHTML = "";
+                docContainer.style.display = "flex";
+                docContainer.style.flexDirection = "column";
+                docContainer.style.alignItems = "flex-start";
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = `signer${i}-document`;
+                radio.value = JSON.stringify(doc);
+                radio.id = `signer${i}-doc-0`;
+                radio.style.marginRight = "5px";
+                radio.addEventListener("change", () => {
+                  document.getElementById(`signer${i}-sign-btn`).disabled = false;
+                });
+                const label = document.createElement("label");
+                label.htmlFor = `signer${i}-doc-0`;
+                label.textContent = doc.name || "Unnamed Document";
+                const wrapper = document.createElement("div");
+                wrapper.style.display = "flex";
+                wrapper.style.alignItems = "center";
+                wrapper.style.marginBottom = "5px";
+                wrapper.appendChild(radio);
+                wrapper.appendChild(label);
+                docContainer.appendChild(wrapper);
+              }
+            })
+            .catch(error => console.error("Error fetching documents:", error));
   }
 
   function attachSignButtonListeners() {
@@ -243,7 +267,13 @@
       const signBtn = document.getElementById(`signer${i}-sign-btn`);
       if (signBtn) {
         signBtn.addEventListener("click", function() {
-          fetch(`/api/call/signature?signerId=${i}`)
+          const signerName = document.getElementById(`signer${i}-name`).value;
+          const selectedDoc = document.querySelector(`input[name="signer${i}-document"]:checked`);
+          if (!selectedDoc) {
+            console.error(`No document selected for signer ${i}`);
+            return;
+          }
+          fetch(`/api/call/partial_sign?signerName=${encodeURIComponent(signerName)}&document=${encodeURIComponent(selectedDoc.value)}`)
                   .then(response => response.json())
                   .then(data => {
                     if (data.signature) {
@@ -262,6 +292,8 @@
 
   document.addEventListener("DOMContentLoaded", function() {
     fetchSigners();
+    fetchDocument();
+    setInterval(fetchDocument, 10000);
     fetchPublicData();
     attachSignButtonListeners();
   });

@@ -1,138 +1,109 @@
 <html>
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
-  }
-
-  body::before {
-    content: "";
-    display: block;
-    position: absolute;
-    background: #282c34;
-    padding-bottom: 1%;
-    background-image: url("../static/assets/background.png");
-    background-size: cover;
-    background-position: center bottom;
-    position: fixed;
-    z-index: -1;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    justify-content: center;
-    align-items: flex-start;
-    opacity: 0.3;
-  }
-
-  #upperRightLogo {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    width: 70px;
-    height: 70px;
-  }
-
-  #bottomRightImage {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
-  }
-
-  .color1 {
-    color: #ef504f;
-  }
-
-  .color2 {
-    color: #000000;
-  }
-
-  .container {
-    width: 90%;
-    height: 80%;
-    max-width: 1200px;
-    margin: 50px auto 0;
-  }
-
-  .row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-  }
-
-  button {
-    background-color: #29023f;
-    color: #fff;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 140px;
-    height: 55px;
-    font-size: 16px;
-    margin-top: 50px;
-  }
-
-  #bottomLeftImage {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    width: 60px;
-  }
-
-  .content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: row;
-  }
-
-  .verify-container {
-    margin-top: 50px;
-    padding: 20px;
-  }
-
-  .document-container {
-    margin-top: 50px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  .download {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .document-name {
-    background-color: rgba(169, 169, 169, 0.4);
-    border-radius: 5px;
-    border: none;
-    height: 55px;
-    margin-top: 50px;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-
-  .triangle {
-    margin-top: 50px;
-    width: 0;
-    height: 0;
-    border-top: 70px solid transparent;
-    border-bottom: 70px solid transparent;
-    border-left: 50px solid #29023f;
-    position: absolute;
-    left: 55%;
-    transform: translateX(-50%);
-    z-index: -1;
-  }
-</style>
+<head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
+    }
+    body::before {
+      content: "";
+      display: block;
+      position: fixed;
+      background: #282c34;
+      padding-bottom: 1%;
+      background-image: url("../static/assets/background.png");
+      background-size: cover;
+      background-position: center bottom;
+      z-index: -1;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      opacity: 0.30;
+    }
+    #upperRightLogo {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      width: 70px;
+      height: 70px;
+    }
+    #bottomRightImage {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+    }
+    .color1 {
+      color: #ef504f;
+    }
+    .color2 {
+      color: #000000;
+    }
+    .container {
+      width: 90%;
+      height: 80%;
+      max-width: 1200px;
+      margin: 50px auto 0;
+      padding: 20px;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+    }
+    button {
+      background-color: #29023f;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 200px;
+      height: 55px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #3b024f;
+    }
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+    }
+    .form-container label {
+      margin: 10px 0 5px;
+    }
+    .form-container input {
+      padding: 8px;
+      margin-bottom: 10px;
+      width: 700px;
+      max-width: 100%;
+      background-color: rgba(169, 169, 169, 0.1);
+      border: none;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    .button-container {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    .error-message {
+      color: red;
+      margin-top: 10px;
+    }
+    .status-message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
 <body>
 <div class="container">
   <div class="row">
@@ -141,70 +112,82 @@
       <span class="color2"> Wallet </span>
     </h1>
   </div>
-  <div class="content">
-    <div class="verify-container">
-      <h2>You have received the required number of signatures!</h2>
-      <button onclick="verify()">Verify</button>
-      <p class="response-message" id="responseMessage"></p>
-    </div>
-    <div class="triangle"></div>
-    <div class="document-container" id="download" style="display:none">
-      <h2>The Document is now signed:</h2>
-      <div class="download">
-        <div class="document-name">
-          <p>residence_permit_signed.json</p>
+  <div class="request-container" id="verifyFormContainer">
+    <h3>Verify Signature</h3>
+    <form onsubmit="handleVerification(event); return false;">
+      <div class="form-container">
+        <label for="signature">Signature:</label>
+        <input type="text" id="signature" name="signature" required />
+
+        <label for="publicKey">Public Key:</label>
+        <input type="text" id="publicKey" name="publicKey" required />
+
+        <div class="button-container">
+          <button type="submit">Verify</button>
         </div>
-        <button onclick="download()">Download Document</button>
       </div>
-    </div>
+    </form>
+    <p class="error-message" id="errorMessage"></p>
+    <p class="status-message" id="verificationStatus"></p>
   </div>
 </div>
-<img
-        id="upperRightLogo"
-        src="../static/assets/polycrypt-logo.ico"
-        alt="Bottom Left Logo"
-/>
-<img id="bottomLeftImage" src="../static/assets/perun_logo.png" alt="Logo" />
-</body>
+
+<img id="upperRightLogo" src="../static/assets/polycrypt-logo.ico" alt="Upper Right Logo" />
+<img id="bottomRightImage" src="../static/assets/perun_logo.png" alt="Bottom Right Logo" />
+
 <script>
-  function verify() {
-    fetch(`/api/call/verify`)
-            .then((response) => response.json())
+  document.addEventListener("DOMContentLoaded", () => {
+    fetchSignatureFromBackend();
+  });
+
+  function fetchSignatureFromBackend() {
+    fetch("/api/call/signature")
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Failed to fetch signature data.");
+              }
+              return response.json();
+            })
             .then((data) => {
-              // Handle the response from the server if needed
-              console.log(data);
-              showDocument(data);
+              // Assuming the response has { signature: "...", publicKey: "..." }
+              document.getElementById("signature").value = data.signature || "";
+              document.getElementById("publicKey").value = data.publicKey || "";
             })
             .catch((error) => {
-              // Handle errors
-              console.error("Error:", error);
-              responseMessage.innerHTML = "Error: Something went wrong.";
+              console.error("Error fetching signature:", error);
+              document.getElementById("errorMessage").innerText = "Error: unable to fetch signature data.";
             });
   }
 
-  function showDocument(data) {
-    var download = document.getElementById("download");
-    if (download) {
-      download.dataset.documentData = JSON.stringify(data);
-      download.style.display = "block";
-    }
-  }
+  // Handle verification form submission and display a frontend symbol based on outcome
+  function handleVerification(event) {
+    event.preventDefault();
+    const signature = document.getElementById("signature").value;
+    const publicKey = document.getElementById("publicKey").value;
 
-  function download() {
-    var download = document.getElementById("download");
-    if (download && download.dataset.documentData) {
-      var data = JSON.parse(download.dataset.documentData);
-      var blob = new Blob([JSON.stringify(data)], {
-        type: "application/json",
-      });
+    const formData = { signature, publicKey };
 
-      var link = document.createElement("a");
-      link.download = "residence_permit_signed.json";
-      link.href = URL.createObjectURL(blob);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    fetch("/api/call/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData)
+    })
+            .then((response) => {
+              if (response.ok) {
+                document.getElementById("verificationStatus").innerText = "✔ Verification successful!";
+                document.getElementById("verificationStatus").style.color = "green";
+              } else {
+                return response.text().then((text) => {
+                  throw new Error(text || "Verification failed");
+                });
+              }
+            })
+            .catch((error) => {
+              console.error("Error during verification:", error);
+              document.getElementById("verificationStatus").innerText = "✖ Verification failed!";
+              document.getElementById("verificationStatus").style.color = "red";
+            });
   }
 </script>
+</body>
 </html>

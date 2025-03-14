@@ -108,6 +108,10 @@
       margin-bottom: 10px;
       box-sizing: border-box; /* Ensure padding is included in the width */
     }
+
+    .error-message {
+      color: red;
+    }
   </style>
 </head>
 <body>
@@ -146,6 +150,7 @@
     </div>
 
     <button type="submit">Submit</button>
+    <p class="error-message" id="errorMessage"></p>
   </form>
 </div>
 <img
@@ -156,11 +161,11 @@
 </body>
 <script>
   function handleSignersSubmission(event) {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
 
     const submitButton = document.querySelector("button[type='submit']");
     submitButton.disabled = true;
-    submitButton.style.backgroundColor = "#888"; // Grey out button
+    submitButton.style.backgroundColor = "#888";
     submitButton.textContent = "Loading...";
 
     const formData = {
@@ -184,12 +189,12 @@
             .catch(error => {
               console.error("Error:", error);
               submitButton.disabled = false;
-              submitButton.textContent = "Submit"; // Restore button text in case of error
-              submitButton.style.backgroundColor = "#29023f"; // Restore original color
+              submitButton.textContent = "Submit";
+              submitButton.style.backgroundColor = "#29023f";
+              document.getElementById("errorMessage").innerText = "Error: unable to process your request.";
             });
   }
 
-  // Attach event listener to the form
   document.getElementById("signers-form").addEventListener("submit", handleSignersSubmission);
 </script>
 </html>

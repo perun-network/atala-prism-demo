@@ -89,33 +89,19 @@
             margin: 9px 0;
             width: 230px;
         }
-        /* Center the documents section and its content */
+        /* Center the documents section and ensure radio buttons are inline */
         .documents {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        .documents label {
+        .document-option {
             display: flex;
-            flex-direction: column;
             align-items: center;
             margin-bottom: 10px;
         }
-        .documents input[type="checkbox"] {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            margin-bottom: 5px;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #29023f;
-            border-radius: 50%;
-            outline: none;
-            vertical-align: middle;
-        }
-        .documents input[type="checkbox"]:checked {
-            background-color: #ef504f;
-            border-color: #29023f;
+        .document-option input[type="radio"] {
+            margin-right: 5px;
         }
         .signature {
             text-align: center;
@@ -140,6 +126,10 @@
             overflow: auto;
             border: 1px solid #ccc;
             display: none;  /* Initially hidden */
+        }
+
+        .error-message {
+            color: red;
         }
     </style>
 </head>
@@ -171,15 +161,15 @@
         </div>
         <div class="documents">
             <h3>Documents:</h3>
-            <label>
+            <div class="document-option">
                 <input
-                        type="checkbox"
+                        type="radio"
                         name="document"
                         value="residence_permit.json"
                         onChange="handleDocumentSelection(this)"
                 />
-                residence-permit.json
-            </label>
+                <label>residence-permit.json</label>
+            </div>
             <pre id="jsonDisplay"></pre>
         </div>
         <div class="signature">
@@ -187,27 +177,23 @@
             <button type="button" onclick="handleRequestSelection()">
                 Get Signature
             </button>
+            <p class="error-message" id="errorMessage"></p>
         </div>
     </div>
 </div>
 <img id="upperRightLogo" src="../static/assets/polycrypt-logo.ico" alt="Bottom Left Logo" />
 <script>
-    async function handleDocumentSelection(checkbox) {
+    async function handleDocumentSelection(radio) {
         const jsonDisplay = document.getElementById("jsonDisplay");
-        if (checkbox.checked) {
-            try {
-                const response = await fetch(`/static/document/residence_permit.json`);
-                if (!response.ok) throw new Error("Failed to load JSON document");
-                const jsonData = await response.json();
-                jsonDisplay.textContent = JSON.stringify(jsonData, null, 4);
-                jsonDisplay.style.display = 'block';  // Show display box when document is selected
-            } catch (error) {
-                console.error(error);
-                alert("Failed to load JSON document");
-            }
-        } else {
-            jsonDisplay.textContent = "";
-            jsonDisplay.style.display = 'none';  // Hide display box when document is deselected
+        try {
+            const response = await fetch(`/static/document/residence_permit.json`);
+            if (!response.ok) throw new Error("Failed to load JSON document");
+            const jsonData = await response.json();
+            jsonDisplay.textContent = JSON.stringify(jsonData, null, 4);
+            jsonDisplay.style.display = 'block';
+        } catch (error) {
+            console.error(error);
+            alert("Failed to load JSON document");
         }
     }
 
@@ -218,17 +204,15 @@
             return;
         }
         try {
-            // Send the document content to the backend using POST
             const response = await fetch("/api/call/setup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: jsonText
             });
             if (!response.ok) throw new Error("Failed to send document to backend");
-            // After successful submission, redirect to the import page
             location.href = "/import";
         } catch (error) {
-            console.error(error);
+            document.getElementById("errorMessage").innerText = "Error: unable to process your request.";
             alert("Failed to send document to backend");
         }
     }

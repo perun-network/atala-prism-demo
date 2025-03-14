@@ -1,127 +1,112 @@
 <html>
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
-    }
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Inter", "Roboto", "Fira Sans", sans-serif !important;
+        }
 
-    body::before {
-        content: "";
-        display: block;
-        position: absolute;
-        background: #282c34;
-        padding-bottom: 1%;
-        background-image: url("../static/assets/background.png");
-        background-size: cover;
-        background-position: center bottom;
-        position: fixed;
-        z-index: -1;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        justify-content: center;
-        align-items: flex-start;
-        opacity: 0.30;
-    }
+        body::before {
+            content: "";
+            display: block;
+            position: fixed;
+            background: #282c34;
+            padding-bottom: 1%;
+            background-image: url("../static/assets/background.png");
+            background-size: cover;
+            background-position: center bottom;
+            z-index: -1;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            opacity: 0.30;
+        }
 
-    #upperRightLogo {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        width: 70px;
-        height: 70px;
-    }
+        #upperRightLogo {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 70px;
+            height: 70px;
+        }
 
-    #bottomRightImage {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        width: 40px;
-        height: 40px;
-    }
+        #bottomRightImage {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+        }
 
-    .color1 {
-        color: #ef504f;
-    }
+        .color1 {
+            color: #ef504f;
+        }
 
-    .color2 {
-        color: #000000;
-    }
+        .color2 {
+            color: #000000;
+        }
 
-    .container {
-        width: 90%;
-        max-width: 1200px;
-        height: 80%;
-        margin: 50px auto 0;
-    }
+        .container {
+            width: 90%;
+            height: 80%;
+            max-width: 1200px;
+            margin: 50px auto 0;
+            padding: 20px;
+        }
 
-    .row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-    }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
 
-    button {
-        background-color: #29023f;
-        color: #fff;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        width: 130px;
-        height: 50px;
-    }
+        button {
+            background-color: #29023f;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 200px;
+            height: 55px;
+        }
 
-    #bottomLeftImage {
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        width: 60px;
-    }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
 
-    .content {
-        display: flex;
-        justify-content: space-between;
-    }
+        .form-container label {
+            margin: 10px 0 5px;
+        }
 
-    .request-container {
-        margin-top: 50px;
-        padding: 20px;
-    }
+        .form-container input {
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 700px;
+            max-width: 100%;
+            background-color: rgba(169, 169, 169, 0.1);
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
 
-    .form-container {
-        display: flex;
-        flex-direction: column;
-    }
+        .button-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+        }
 
-    .error-message {
-        color: red;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: left;
-        justify-content: space-between;
-    }
-
-    label {
-        margin: 10px 0;
-    }
-
-    input {
-        padding: 8px;
-        margin-bottom: 10px;
-        width: 300px;
-        background-color: rgba(169, 169, 169, 0.1);
-        border: none;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
-</style>
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
 <body>
 <div class="container">
     <div class="row">
@@ -130,230 +115,73 @@
             <span class="color2"> Wallet </span>
         </h1>
     </div>
-    <div class="content">
-        <div class="request-container" id="firstForm">
-            <h3>Please import the given public key and Collection ID</h3>
-            <form
-                    onsubmit="handleImportSubmission(event, document.getElementById('collectionID').value, document.getElementById('publicKey').value); return false"
-                    ;
-            >
-                <div class="form-container">
-                    <label for="collectionID">Collection ID:</label>
-                    <input
-                            type="text"
-                            id="collectionID"
-                            name="collectionID"
-                            required
-                    /><br />
+    <div class="request-container" id="signatureFormContainer">
+        <h3>Please fill in the signature fields</h3>
+        <form onsubmit="handleSignatureSubmission(event); return false;">
+            <div class="form-container">
+                <label for="bigR">BigR:</label>
+                <input type="text" id="bigR" name="bigR" required />
 
-                    <label for="publicKey">Public Key:</label>
-                    <input
-                            type="text"
-                            id="publicKey"
-                            name="publicKey"
-                            required
-                    /><br />
+                <label for="firstPartialSignature">First Partial Signature:</label>
+                <input type="text" id="firstPartialSignature" name="firstPartialSignature" required />
 
+                <label for="secondPartialSignature">Second Partial Signature:</label>
+                <input type="text" id="secondPartialSignature" name="secondPartialSignature" required />
+                <div class="button-container">
                     <button type="submit">Submit</button>
                 </div>
-            </form>
-            <p class="error-message" id="errorMessage1"></p>
-        </div>
-        <div class="request-container" id="secondForm" style="display: none">
-            <h3>Please import the Invitations</h3>
-            <div id="firstInvitationForm">
-                <form>
-                    <div class="form-container">
-                        <label for="name1">Name of first signing Instance:</label>
-                        <input type="text" id="name1" name="name1" required /><br />
-                        <label for="invitation1">Connection Invitation:</label>
-                        <input
-                                type="text"
-                                id="invitation1"
-                                name="invitation1"
-                                required
-                        /><br />
-                        <button
-                                type="button"
-                                onclick="addInvitationInput('firstInvitationForm', 'secondInvitationForm')"
-                        >
-                            Add Request
-                        </button>
-                    </div>
-                </form>
             </div>
-            <div id="secondInvitationForm" style="display: none">
-                <form>
-                    <div class="form-container">
-                        <label for="name2">Name of second signing Instance:</label>
-                        <input type="text" id="name2" name="name2" required /><br />
-                        <label for="invitation2">Connection Invitation:</label>
-                        <input
-                                type="text"
-                                id="invitation2"
-                                name="invitation2"
-                                required
-                        /><br />
-                        <button
-                                type="button"
-                                onclick="addInvitationInput('secondInvitationForm', 'thirdInvitationForm')"
-                        >
-                            Add Request
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div id="thirdInvitationForm" style="display: none">
-                <form>
-                    <div class="form-container">
-                        <label for="name3">Name of third signing Instance:</label>
-                        <input type="text" id="name3" name="name3" required /><br />
-                        <label for="invitation3">Connection Invitation:</label>
-                        <input
-                                type="text"
-                                id="invitation3"
-                                name="invitation3"
-                                required
-                        /><br />
-                        <button
-                                id="connectButton"
-                                type="button"
-                                onclick="connectInvitations()"
-                        >
-                            Connect and get Signatures
-                        </button>
-                    </div>
-                </form>
-                <p class="error-message" id="errorMessage2"></p>
-            </div>
-        </div>
+        </form>
+        <p class="error-message" id="errorMessage"></p>
     </div>
 </div>
 <img
         id="upperRightLogo"
         src="../static/assets/polycrypt-logo.ico"
-        alt="Bottom Left Logo"
+        alt="Upper Right Logo"
 />
-<img id="bottomLeftImage" src="../static/assets/perun_logo.png" alt="Logo" />
-</body>
+<img
+        id="bottomRightImage"
+        src="../static/assets/perun_logo.png"
+        alt="Bottom Right Logo"
+/>
 <script>
-    var data = {
-        CollectionID: "default_collection_id_value",
-        PublicKey: "default_public_key_value",
-    };
-    function handleImportSubmission(event, collectionID, publicKey) {
+    function handleSignatureSubmission(event) {
         event.preventDefault();
+        const bigR = document.getElementById("bigR").value;
+        const firstPartialSignature = document.getElementById("firstPartialSignature").value;
+        const secondPartialSignature = document.getElementById("secondPartialSignature").value;
 
-        console.log("Collection ID:", collectionID);
-        console.log("Public Key:", publicKey);
+        console.log("bigR:", bigR);
+        console.log("firstPartialSignature:", firstPartialSignature);
+        console.log("secondPartialSignature:", secondPartialSignature);
 
-        fetch(
-            "/api/call/import?arg1=" +
-            encodeURIComponent(collectionID) +
-            "&arg2=" +
-            encodeURIComponent(publicKey),
-            {
-                credentials: "include",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            },
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                if (data.result == null) {
-                    showNextForm();
-                } else {
-                    errorMessage1.innerHTML = "Error: Key or ID are invalid";
-                }
-            })
-            .catch((error) => {
-                console.error("Error calling Go function with args:", error);
-            });
-    }
-
-    function showNextForm() {
-        // Assuming you have a second form with an id 'secondForm'
-        var secondForm = document.getElementById("secondForm");
-        if (secondForm) {
-            // Show the second form
-            secondForm.style.display = "block";
-        }
-    }
-
-    function addInvitationInput(currentFormId, nextFormId) {
-        const currentForm = document.getElementById(currentFormId);
-
-        currentForm.style.display = "none";
-
-        const nextForm = document.getElementById(nextFormId);
-        nextForm.style.display = "block";
-    }
-
-    function connectInvitations() {
-        invitationData = []; // Reset the array
-        // Loop through existing invitations and save the values
-        for (let i = 1; i <= 3; i++) {
-            let nameInput = document.getElementById("name" + i);
-            let invitationInput = document.getElementById("invitation" + i);
-
-            if (nameInput && invitationInput) {
-                let nameValue = nameInput.value.trim();
-                let invitationValue = invitationInput.value.trim();
-
-                // Check if both name and invitation are not empty
-                if (nameValue !== "" && invitationValue !== "") {
-                    invitationData.push({
-                        name: nameValue,
-                        invitation: invitationValue,
-                    });
-                }
-            }
-        }
-
-        var button = document.getElementById("connectButton");
-        button.disabled = true;
-        button.innerHTML = "Loading...";
-        // Now you have all the entered data in the invitationData array
-        console.log(invitationData);
-        const queryString = invitationData
-            .map((item) => {
-                return `name=${encodeURIComponent(
-                    item.name,
-                )}&invitation=${encodeURIComponent(item.invitation)}`;
-            })
-            .join("&");
-        fetch(`/api/call/invite?${queryString}`, {
-            credentials: "include",
+        const formData = {
+            bigR: bigR,
+            firstPartialSignature: firstPartialSignature,
+            secondPartialSignature: secondPartialSignature
+        };
+        fetch("/api/call/sign?", {
+            method: "POST",
             headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
+            body: JSON.stringify(formData)
         })
-            .then((response) => response.json())
-            .then((data) => {
-                // Handle the response from the server if needed
-                console.log(data);
-                fetch("/api/call/sign")
-                    .then((response) => response.json())
-                    .then((data) => {
-                        console.log(data);
-                        if (data.result == null) {
-                            location.href = "/verify";
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error calling Go function with args:", error);
+            .then((response) => {
+                if (response.ok) {
+                    location.href = "/verify";
+                } else {
+                    return response.text().then((text) => {
+                        throw new Error(text || "Unexpected error occurred");
                     });
+                }
             })
             .catch((error) => {
-                // Handle errors
-                errorMessage2.innerHTML =
-                    "Error: one or more invitations are invalid";
-                console.error("Error:", error);
+                console.error("Error calling the signature endpoint:", error);
+                document.getElementById("errorMessage").innerText = "Error: unable to process your request.";
             });
     }
 </script>
+</body>
 </html>
